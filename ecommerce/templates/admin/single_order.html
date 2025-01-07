@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        p {
+            color: #555;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #f9f9f9;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Order #{{ order.id }}</h1>
+        <p>Status: {{ order.status }}</p>
+        <p>Total Amount: ${{ order.total_amount }}</p>
+        <p>Shipping Address: {{ order.shipping_address.street }} {{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.postal_code }} {{ order.shipping_address.country }}</p>
+        <p>Phone: {{ order.shipping_address.phone }}</p>
+        
+        <h2>Items</h2>
+        <ul>
+            {% for item in order.items.all %}
+            <li>
+                <span><img src="{{ item.product.thumbnail }}" alt="{{ item.product.name }}" style="width: 100px; height: 100px;"></span>
+                <span>{{ item.product.name }}</span>
+                <span>Quantity: {{ item.quantity }}</span>
+                <span>Price: ${{ item.price }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        
+        <form action="{{ payment_link }}" method="post">
+            {% csrf_token %}
+            <button type="submit">Make Payment</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,177 @@
+{% comment %} {% extends "admin/base_site.html" %} {% endcomment %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h2>Dashboard</h2>
+    
+    <div class="stats-container">
+        <div class="stat-box">
+            <h3>Orders</h3>
+            <p>Total: {{ total_orders }}</p>
+            <p>Last 30 days: {{ recent_orders }}</p>
+        </div>
+        
+        <div class="stat-box">
+            <h3>Products</h3>
+            <p>Total: {{ total_products }}</p>
+            <p>Out of stock: {{ out_of_stock }}</p>
+        </div>
+        
+        <div class="stat-box">
+            <h3>Revenue</h3>
+            <p>Total: ${{ total_revenue|floatformat:2 }}</p>
+            <p>Last 30 days: ${{ recent_revenue|floatformat:2 }}</p>
+        </div>
+    </div>
+
+    <div class="recent-orders">
+        <h3>Most Recent Orders</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>User</th>
+                    <th>Total Amount</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in recent_orders_list %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.user.username }}</td>
+                    <td>${{ order.total_amount|floatformat:2 }}</td>
+                    <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="container">
+        <h1>Product Lists</h1>
+        <div class="product-list" id="product-list">
+            <!-- Products will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            axios.get('http://localhost:8001/api/products/')
+                .then(response => {
+                    const products = response.data.results;
+                    const productList = document.getElementById('product-list');
+                    products.forEach(product => {
+                        const productCard = document.createElement('div');
+                        productCard.classList.add('product-card');
+                        productCard.innerHTML = `
+                            <img src="${product.thumbnail || 'https://via.placeholder.com/150'}" alt="${product.name}">
+                            <h3>${product.name}</h3>
+                            <p>${product.category || 'No description available.'}</p>
+                            <p class="price">$${parseFloat(product.price).toFixed(2)}</p>
+                            <p class="stock">${product.stock_count} in stock</p>
+                        `;
+                        productList.appendChild(productCard);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching products:', error);
+                });
+        });
+    </script>
+</div>
+
+<style>
+    .dashboard-container {
+        padding: 80px;
+    }
+    
+    .stats-container {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-box {
+        background: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        flex: 1;
+    }
+    
+    .stat-box h3 {
+        margin-top: 0;
+        color: #333;
+    }
+
+    .stat-box p {
+        color: #333;
+    }
+
+    .recent-orders table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .recent-orders th,
+    .recent-orders td {
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+    
+    .recent-orders th {
+        color: #333;
+        background: #f5f5f5;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f9;
+    }
+    .container {
+        width: 80%;
+        margin: 20px auto;
+    }
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+    .product-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    .product-card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin: 10px;
+        padding: 20px;
+        width: calc(33% - 40px);
+        box-sizing: border-box;
+        transition: transform 0.2s;
+    }
+    .product-card:hover {
+        transform: translateY(-5px);
+    }
+    .product-card img {
+        max-width: 100%;
+        border-radius: 8px;
+    }
+    .product-card h3 {
+        margin: 10px 0;
+        color: #333;
+    }
+    .product-card p {
+        color: #666;
+    }
+    .product-card .price {
+        font-size: 1.2em;
+        color: #e91e63;
+    }
+</style>
+{% endblock %} 
