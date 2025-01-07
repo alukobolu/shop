@@ -27,8 +27,8 @@ SECRET_KEY = 'django-insecure-18yh@i(*$_whz(zg_#gmtt(z6^(vx76z2(i9#f$kls!(b_n_rn
 DEBUG = True
 
 SITE_ID =1
-ALLOWED_HOSTS = []
-CSRF_TRUSTED_ORIGINS = []
+ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = ['https://shop-production-b7d8.up.railway.app']
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ORIGIN_ALLOW_ALL = True
