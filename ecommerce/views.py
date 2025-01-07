@@ -208,7 +208,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             return Response({
                 'order_id': order.id,
                 'status': order.status,
-                "response": "Make Payment at http://127.0.0.1:8001/api/order/" + str(order.id)
+                "response": "Make Payment at https://shop-production-b7d8.up.railway.app/api/order/" + str(order.id)
                 # 'estimated_delivery': order.estimated_delivery,
                 # 'tracking_number': order.tracking_number
             }, status=status.HTTP_201_CREATED)
